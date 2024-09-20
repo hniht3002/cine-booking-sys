@@ -11,15 +11,24 @@ const base64url = (str:string) => {
         .replace(/=+$/, '');  // Remove padding '='
 }
 
-export const createJWToken = (payload:Object) => {
+const createSignature = (tokenData:string) => {
     if(!process.env.JWT_SECRET_KEY) {
         throw Error("Secret key not found!")
     }
+    const hmac = createHmac("sha256", process.env.JWT_SECRET_KEY)
+    const signature = hmac.update(tokenData).digest("base64url")
+    return signature
+}
+
+export const createJWToken = (header:Object|null, payload:Object) => {
+    
 
     // 1. khai báo header và payload
-    const header = {
-        alg: "HS256",
-        typ: "JWT"
+    if(!header) {
+        const header = {
+            alg: "HS256",
+            typ: "JWT"
+        }
     }
 
     // 2. Mã hóa base64 header và payload
@@ -30,8 +39,7 @@ export const createJWToken = (payload:Object) => {
     const tokenData = `${encodeHeader}.${encodePayload}`
 
     // 4. Tạo signature    
-    const hmac = createHmac("sha256", process.env.JWT_SECRET_KEY)
-    const signature = hmac.update(tokenData).digest("base64url")
+    const signature = createSignature(tokenData)
 
     return `${tokenData}.${signature}`
 
@@ -43,4 +51,11 @@ export const decodeJWToken = (token:string) => {
     const header = JSON.parse(atob(encodedheader))
     const payload = JSON.parse(atob(encodedpayload))
     return [header, payload, signature]
+}
+
+export const verifyJWToken = (header:object, payload:object, signature:string) => {
+    const encodeHeader = base64url(JSON.stringify(header))
+    const encodePayload = base64url(JSON.stringify(payload))
+    const newSignature = createSignature(`${encodeHeader}.${encodePayload}`)
+    return newSignature === signature;
 }

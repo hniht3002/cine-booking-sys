@@ -27,7 +27,7 @@ exports.postLogin = (req:Request, res:Response, next:NextFunction) => {
                                 passwordUpdatedAt: user.passwordUpdatedAt,
                                 iat: Date.now() + 3600000 //set token
                             }
-                            const token = createJWToken(payload);
+                            const token = createJWToken(null, payload);
                             return res.status(200).json({message: "Success", token: token})
                         } else {
                             return res.status(400).json({message: "password incorrect"})
@@ -72,5 +72,5 @@ exports.postRegister = (req:Request, res:Response, next:NextFunction) => {
 }
 
 exports.testAuthen = (req:Request, res:Response, next:NextFunction) => {
-    console.log("Test authen")
+    console.log(res.locals)
 }
