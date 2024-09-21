@@ -4,10 +4,10 @@ import User from "../models/user";
 import * as bcrypt from "bcrypt";
 import { validationResult } from "express-validator";
 import dotenv from "dotenv";
-import { createJWToken, decodeJWToken } from "../utils/JWT";
+import { createJWToken } from "../utils/JWT";
+import Movie from "../models/movie";
 dotenv.config();
 
-const SALT_STRING = process.env.SALT_STRING;
 
 exports.postLogin = (req:Request, res:Response, next:NextFunction) => {
     const errors = validationResult(req);
@@ -24,6 +24,7 @@ exports.postLogin = (req:Request, res:Response, next:NextFunction) => {
                         if(doMatch) {
                             const payload = {
                                 sub: user._id,
+                                role: user.role,
                                 passwordUpdatedAt: user.passwordUpdatedAt,
                                 iat: Date.now() + 3600000 //set token
                             }
@@ -71,6 +72,34 @@ exports.postRegister = (req:Request, res:Response, next:NextFunction) => {
         })
 }
 
+exports.postAddMovie = (req: Request, res: Response, next: NextFunction) => {
+
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()) {
+        return res.json({message: "Has errors", errors: errors})
+    }
+
+    const user = res.locals.user;
+
+    const movie = new Movie({
+        title: req.body.title,
+        description: req.body.description,
+        createdBy: user._id,
+    })
+
+    movie.save()
+        .then((result:Document) => {
+            return res.status(200).json({message: "Add movie successfully", result: result})
+        })
+
+        .catch((err:Error) => {
+            return res.status(555).json({message: "Add movie failed", error: err})
+        })
+}
+
 exports.testAuthen = (req:Request, res:Response, next:NextFunction) => {
+    console.log("res locals")
     console.log(res.locals)
+    return res.json({he: "he"})
 }

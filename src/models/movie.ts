@@ -1,8 +1,16 @@
 export {}
-const mongoose = require("mongoose")
-const Schema = mongoose.Schema
+import { ObjectId, Schema } from "mongoose";
 
-const movieSchema = new Schema({
+const mongoose = require("mongoose")
+
+interface IMovie extends Document {
+    title: string;
+    description: string;
+    createdAt: Date;
+    createdBy: String;
+}
+
+const movieSchema : Schema<IMovie> = new Schema({
     title: {
         type: String,
         require: true
@@ -12,6 +20,19 @@ const movieSchema = new Schema({
         require: true
     },
 
+    createdBy: {
+        type: String,
+        required: true
+    },
+
+    createdAt: {
+        type: Date,
+        default: Date.now()
+    }
+
+
+
 })
 
-module.exports = mongoose.model("Movie", movieSchema);
+const Movie = mongoose.model("Movie", movieSchema);
+export default Movie;

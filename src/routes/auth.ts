@@ -3,7 +3,8 @@ import { Router } from "express";
 import { body } from "express-validator";
 import User from "../models/user";
 const authController = require("../controllers/authController")
-const authMiddleware = require("../middlewares/authMiddlewares")
+const authenticationMiddleware = require("../middlewares/authenticationMiddleware")
+const authorizationMiddleware = require("../middlewares/authorizationMiddleware")
 
 const router: Router = Router();
 
@@ -50,6 +51,25 @@ router.post("/register", [
 
 ], authController.postRegister)
 
-router.post("/test", authMiddleware, authController.testAuthen)
+router.post("/add-movie",  [
+    authenticationMiddleware, 
+    authorizationMiddleware, 
+    body("title").isLength({min: 1}).withMessage("Title is at least 1 character long"), 
+    body("description").isLength({min: 1}).withMessage("Description is at least 1 character long")
+], authController.postAddMovie)
+
+
+
+
+
+
+
+
+
+
+
+router.post("/test", authenticationMiddleware, authorizationMiddleware, authController.testAuthen)
+
+
 
 export default router;

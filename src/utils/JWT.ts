@@ -21,11 +21,9 @@ const createSignature = (tokenData:string) => {
 }
 
 export const createJWToken = (header:Object|null, payload:Object) => {
-    
-
     // 1. khai báo header và payload
-    if(!header) {
-        const header = {
+    if(header == null) {
+        header = {
             alg: "HS256",
             typ: "JWT"
         }
