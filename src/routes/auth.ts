@@ -51,22 +51,6 @@ router.post("/register", [
 
 ], authController.postRegister)
 
-router.post("/add-movie",  [
-    authenticationMiddleware, 
-    authorizationMiddleware, 
-    body("title").isLength({min: 1}).withMessage("Title is at least 1 character long"), 
-    body("description").isLength({min: 1}).withMessage("Description is at least 1 character long")
-], authController.postAddMovie)
-
-
-
-
-
-
-
-
-
-
 
 router.post("/test", authenticationMiddleware, authorizationMiddleware, authController.testAuthen)
 

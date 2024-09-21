@@ -3,11 +3,17 @@ import express, { Express } from "express";
 import dotenv from "dotenv";
 const mongoose = require("mongoose")
 import multer from "multer";
-
-import authRoutes from "./routes/auth";
 import bodyParser from "body-parser";
 
+import authRoutes from "./routes/auth";
+import adminRoutes from "./routes/admin"
+
 dotenv.config();
+
+const authenticationMiddleware = require("./middlewares/authenticationMiddleware")
+const authorizationMiddleware = require("./middlewares/authorizationMiddleware")
+
+
 
 const upload = multer()
 
@@ -22,6 +28,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(upload.array(""))
 
 app.use("/auth", authRoutes)
+app.use("/auth", authenticationMiddleware, authorizationMiddleware, adminRoutes)
 
 mongoose.connect(process.env.CONNECTION_STRING)
   .then(() => {

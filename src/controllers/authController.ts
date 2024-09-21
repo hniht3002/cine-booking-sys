@@ -5,7 +5,6 @@ import * as bcrypt from "bcrypt";
 import { validationResult } from "express-validator";
 import dotenv from "dotenv";
 import { createJWToken } from "../utils/JWT";
-import Movie from "../models/movie";
 dotenv.config();
 
 
@@ -69,32 +68,6 @@ exports.postRegister = (req:Request, res:Response, next:NextFunction) => {
         })
         .catch(err => {
             return res.json(555).json({message: "Register failed", error: err})
-        })
-}
-
-exports.postAddMovie = (req: Request, res: Response, next: NextFunction) => {
-
-    const errors = validationResult(req);
-
-    if(!errors.isEmpty()) {
-        return res.json({message: "Has errors", errors: errors})
-    }
-
-    const user = res.locals.user;
-
-    const movie = new Movie({
-        title: req.body.title,
-        description: req.body.description,
-        createdBy: user._id,
-    })
-
-    movie.save()
-        .then((result:Document) => {
-            return res.status(200).json({message: "Add movie successfully", result: result})
-        })
-
-        .catch((err:Error) => {
-            return res.status(555).json({message: "Add movie failed", error: err})
         })
 }
 
