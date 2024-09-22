@@ -3,6 +3,23 @@ import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
 import Movie, { IMovie } from "../models/movie";
 
+exports.getMovies = (req: Request, res: Response, next: NextFunction) => {
+    let page:number = 1;
+    if(req.query.page) {
+        page = Number(req.query.page)
+    }
+    const ITEM_PER_PAGE = 2;
+    Movie.find()
+        .skip((page - 1)*ITEM_PER_PAGE)
+        .limit(ITEM_PER_PAGE)
+        .then((movies: Array<IMovie>) => {
+            return res.status(200).json({message: "Get movie successfully", result: movies})
+        })
+        .catch((err:Error) => {
+            return res.status(555).json({message: "Get movie failed", error: err})
+        })
+}
+
 exports.postAddMovie = (req: Request, res: Response, next: NextFunction) => {
 
     const errors = validationResult(req);

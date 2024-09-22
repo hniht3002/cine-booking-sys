@@ -5,6 +5,7 @@ const adminController = require("../controllers/adminController")
 
 const router: Router = Router();
 
+router.get("/movies", adminController.getMovies)
 
 router.post("/add-movie",  [ 
     body("title").isLength({min: 1}).withMessage("Title is at least 1 character long"), 
