@@ -51,4 +51,6 @@ router.post("/edit-movie", [
 
 ], adminController.postEditMovie)
 
+router.delete("/delete-movie", adminController.deleteMovie)
+
 export default router
