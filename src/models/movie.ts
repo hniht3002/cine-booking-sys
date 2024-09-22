@@ -1,13 +1,19 @@
 export {}
-import { ObjectId, Schema } from "mongoose";
+import { Decimal128, model, Schema, Types, Document  } from "mongoose";
 
 const mongoose = require("mongoose")
 
-interface IMovie extends Document {
+export interface IMovie extends Document {
     title: string;
     description: string;
+    poster: string;
+    length: string;
+    rate: Decimal128;
+    genre: string;
+    directors: Array<string>;
+    actors: Array<string>;
+    createdBy: string;
     createdAt: Date;
-    createdBy: String;
 }
 
 const movieSchema : Schema<IMovie> = new Schema({
@@ -17,6 +23,36 @@ const movieSchema : Schema<IMovie> = new Schema({
     },
     description: {
         type: String,
+        require: true
+    },
+
+    poster: {
+        type: String,
+        require: true
+    },
+
+    directors: {
+        type: [String],
+        require: true
+    },
+
+    actors: {
+        type: [String],
+        require: true
+    },
+
+    length: {
+        type: String,
+        require: true
+    },
+
+    genre: {
+        type: String,
+        require: true
+    },
+
+    rate: {
+        type: Types.Decimal128,
         require: true
     },
 
@@ -34,5 +70,5 @@ const movieSchema : Schema<IMovie> = new Schema({
 
 })
 
-const Movie = mongoose.model("Movie", movieSchema);
+const Movie = model<IMovie>("Movie", movieSchema);
 export default Movie;

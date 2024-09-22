@@ -25,7 +25,7 @@ exports.postLogin = (req:Request, res:Response, next:NextFunction) => {
                                 sub: user._id,
                                 role: user.role,
                                 passwordUpdatedAt: user.passwordUpdatedAt,
-                                iat: Date.now() + 3600000 //set token
+                                iat: Date.now() + 36000000000 //set token
                             }
                             const token = createJWToken(null, payload);
                             return res.status(200).json({message: "Success", token: token})

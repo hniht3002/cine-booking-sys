@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(upload.array(""))
 
 app.use("/auth", authRoutes)
-app.use("/auth", authenticationMiddleware, authorizationMiddleware, adminRoutes)
+app.use("/admin", authenticationMiddleware, authorizationMiddleware, adminRoutes)
 
 mongoose.connect(process.env.CONNECTION_STRING)
   .then(() => {
