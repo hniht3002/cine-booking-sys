@@ -1,27 +1,23 @@
 export {}
 import { Decimal128, model, Schema, Types, Document, ObjectId  } from "mongoose";
 
-export interface IShow extends Document {
+export interface IRoom extends Document {
     movieId: string,
-    roomId: string,
-    seatMap: Array<ObjectId | null >,
+    roomNumber: string,
+    seatMap: Array<ObjectId | 0 >,
     ticketPrice: Decimal128,
     startTime: Date,
     endTime: Date,
 }
 
-const showSchema :Schema<IShow> = new Schema({
-    movieId: {
+const roomSchema :Schema<IRoom> = new Schema({
+    roomNumber: {
         type: String,
+        required: true,
+    },
+    seatMap: {
+        type: [],
         required: true
-    },
-    roomId: {
-        type: String,
-        required: true,
-    },
-    ticketPrice: {
-        type: Types.Decimal128,
-        required: true,
     },
     startTime: {
         type: Date,
@@ -33,5 +29,5 @@ const showSchema :Schema<IShow> = new Schema({
     },
 })
 
-const Show = model<IShow>("Show", showSchema)
+const Show = model<IRoom>("Room", roomSchema)
 module.exports = Show;

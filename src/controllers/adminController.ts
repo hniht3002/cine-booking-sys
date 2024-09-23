@@ -2,7 +2,6 @@ export {}
 import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
 import Movie, { IMovie } from "../models/movie";
-import mongoose from "mongoose";
 
 exports.getMovies = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
