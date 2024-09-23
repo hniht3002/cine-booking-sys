@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 
 import authRoutes from "./routes/auth";
 import adminRoutes from "./routes/admin"
+import movieRoutes from "./routes/movie"
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use(upload.array(""))
 
 app.use("/auth", authRoutes)
 app.use("/admin", authenticationMiddleware, authorizationMiddleware, adminRoutes)
+app.use("/movie", movieRoutes)
 
 mongoose.connect(process.env.CONNECTION_STRING)
   .then(() => {

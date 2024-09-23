@@ -1,5 +1,5 @@
 export {}
-import { NextFunction, Request, Response, Router } from "express";
+import {Router } from "express";
 import { body } from "express-validator";
 const adminController = require("../controllers/adminController")
 
