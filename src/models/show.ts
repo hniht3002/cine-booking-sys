@@ -6,6 +6,7 @@ export interface IShow extends Document {
     roomId: string,
     seatMap: Array<ObjectId | null >,
     ticketPrice: Decimal128,
+    ticketQuantity: Number,
     startTime: Date,
     endTime: Date,
 }
@@ -23,6 +24,10 @@ const showSchema :Schema<IShow> = new Schema({
         type: Types.Decimal128,
         required: true,
     },
+    ticketQuantity: {
+        type: Number,
+        require: true
+    },
     startTime: {
         type: Date,
         required: true
@@ -34,4 +39,4 @@ const showSchema :Schema<IShow> = new Schema({
 })
 
 const Show = model<IShow>("Show", showSchema)
-module.exports = Show;
+export default Show 

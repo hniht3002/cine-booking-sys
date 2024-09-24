@@ -21,3 +21,4 @@ exports.search = (req:Request, res:Response, next:NextFunction) => {
             return res.status(555).json({message: "Find movie failed", error: err})
         })
 }
+

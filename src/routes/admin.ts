@@ -53,4 +53,8 @@ router.post("/edit-movie", [
 
 router.delete("/delete-movie", adminController.deleteMovie)
 
+
+router.get("/show", adminController.getShows)
+
+router.post("/add-show", adminController.postAddShow)
 export default router

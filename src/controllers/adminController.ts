@@ -2,6 +2,9 @@ export {}
 import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
 import Movie, { IMovie } from "../models/movie";
+import Show, { IShow } from "../models/show";
+
+// admin movie usecase
 
 exports.getMovies = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
@@ -146,4 +149,57 @@ exports.deleteMovie = (req: Request, res: Response, next: NextFunction) => {
             return res.status(555).json({message: "Delete movie failed", error: err})
         })
 
+}
+
+
+//admin show usecase
+
+exports.getShows = (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()) {
+        return res.json({message: "Has errors", errors: errors})
+    }
+
+    let page:number = 1;
+    if(req.query.page) {
+        page = Number(req.query.page)
+    }
+    const ITEM_PER_PAGE = 2;
+    Show.find()
+        .skip((page - 1)*ITEM_PER_PAGE)
+        .limit(ITEM_PER_PAGE)
+        .then((shows: Array<IShow>) => {
+            return res.status(200).json({message: "Get shows successfully", result: shows})
+        })
+        .catch((err:Error) => {
+            return res.status(555).json({message: "Get shows failed", error: err})
+        })
+}
+
+exports.postAddShow = (req: Request, res: Response, next: NextFunction) => {
+
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()) {
+        return res.json({message: "Has errors", errors: errors})
+    }
+
+    const show = new Show({
+        movieId: req.body.movieId,
+        roomId: req.body.roomId,
+        ticketPrice: req.body.ticketPrice,
+        ticketQuantity: req.body.ticketQuantity,
+        startTime: new Date(req.body.startTime),
+        endTime: new Date(req.body.endTime),
+    })
+
+    show.save()
+        .then((show:IShow) => {
+            return res.status(200).json({message: "Add show successfully", result: show})
+        })
+
+        .catch((err:Error) => {
+            return res.status(555).json({message: "Add show failed", error: err})
+        })
 }
