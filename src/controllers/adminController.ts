@@ -185,21 +185,39 @@ exports.postAddShow = (req: Request, res: Response, next: NextFunction) => {
         return res.json({message: "Has errors", errors: errors})
     }
 
-    const show = new Show({
-        movieId: req.body.movieId,
-        roomId: req.body.roomId,
-        ticketPrice: req.body.ticketPrice,
-        ticketQuantity: req.body.ticketQuantity,
-        startTime: new Date(req.body.startTime),
-        endTime: new Date(req.body.endTime),
+    const startTime = new Date(req.body.startTime)
+    const endTime = new Date(req.body.endTime)
+    Show.findOne({
+        roomId: req.body.roomId, 
+        $or: [
+            {startTime: {$lt: startTime, $gte: endTime}},
+            {endTime: {$gt: startTime, $lte: endTime}},
+            {startTime: {$lte: startTime, $gte: endTime}},
+        ]
     })
+        .then(existingShow => {
+            if(existingShow) {
+                return res.status(409).json({message: `Duplicated time with show ${existingShow._id}`})
+            }
 
-    show.save()
-        .then((show:IShow) => {
-            return res.status(200).json({message: "Add show successfully", result: show})
+            const show = new Show({
+                movieId: req.body.movieId,
+                roomId: req.body.roomId,
+                ticketPrice: req.body.ticketPrice,
+                ticketQuantity: req.body.ticketQuantity,
+                startTime: startTime,
+                endTime: endTime,
+            })
+        
+            show.save()
+                .then((show:IShow) => {
+                    return res.status(200).json({message: "Add show successfully", result: show})
+                })
         })
 
         .catch((err:Error) => {
             return res.status(555).json({message: "Add show failed", error: err})
         })
+
+    
 }
