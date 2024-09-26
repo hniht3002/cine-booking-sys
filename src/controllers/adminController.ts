@@ -221,3 +221,82 @@ exports.postAddShow = (req: Request, res: Response, next: NextFunction) => {
 
     
 }
+
+exports.getEditShow = (req: Request, res: Response, next: NextFunction) => {
+
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()) {
+        return res.json({message: "Has errors", errors: errors})
+    }
+
+    const id = req.query.id;
+
+    Show.findById(id)
+        .then((show:IShow|null) => {
+            if(!show) {
+                return res.status(404).json({message: "Get editing show failed", error: "Show not found"})
+            }
+
+            return res.status(200).json({message: "Success", result: show})
+        })
+
+        .catch((err:Error) => {
+            return res.status(555).json({message: "Get editing show failed", error: err})
+        })
+}
+
+exports.postEditShow = (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()) {
+        return res.json({message: "Has errors", errors: errors})
+    }
+
+    const id = req.body.id
+
+    Show.findById(id)
+        .then((show:IShow|null) => {
+
+            if(!show) {
+                return  Promise.reject({ message: "Movie not found" })
+            }
+
+            return show;
+        })
+
+        .then((show) => {
+            const startTime = new Date(req.body.startTime)
+            const endTime = new Date(req.body.endTime)
+
+            return Show.findOne({
+                roomId: req.body.roomId, 
+                $or: [
+                    {startTime: {$lt: startTime, $gte: endTime}},
+                    {endTime: {$gt: startTime, $lte: endTime}},
+                    {startTime: {$lte: startTime, $gte: endTime}},
+                ]
+            })
+                .then(existingShow => {
+                    if(existingShow && existingShow._id === id) {
+                        return res.status(409).json({message: `Duplicated time with show ${existingShow._id}`})
+                    }
+
+                    show.movieId = req.body.movieId,
+                    show.roomId = req.body.roomId,
+                    show.ticketPrice = req.body.ticketPrice,
+                    show.ticketQuantity = req.body.ticketQuantity,
+                    show.startTime = startTime,
+                    show.endTime = endTime
+                
+                    return show.save()
+                        .then((show:IShow) => {
+                            return res.status(200).json({message: "Update show successfully", result: show})
+                        })
+                })
+        })
+
+        .catch((err:Error) => {
+            return res.status(555).json({message: "Edit movie failed", error: err})
+        })
+}

@@ -58,4 +58,10 @@ router.get("/show", adminController.getShows)
 
 router.post("/add-show", adminController.postAddShow)
 
+router.get("/edit-show", adminController.getEditShow)
+
+router.post("/edit-show", adminController.postEditShow)
+
+
+
 export default router
